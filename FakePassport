@@ -1,0 +1,170 @@
+print('Hello')
+print("Welcome to Saransh's version of world's Worst Fake Passport Generator")
+import time
+import random
+import string
+
+first_name_1='' #input string for first name 1 
+first_name_2='' #input string for first name 2
+last_name_1='' #input string for last name 1
+last_name_2='' #input string for last name 2
+len_fn1=0 #length of string: first name 1 as integer
+len_fn2=0 #length of string first name 2 as integer
+len_ln1=0 #length of string last name 1 as integer
+len_ln2=0 #length of string last name 2 as integer
+slice_fn1=0 #specifies the slice to implement on first name 1 as integer
+slice_fn2=0 #specifies the slice to implement on first name 2 as integer
+slice_ln1=0 #specifies the slice to implement on last name 1 as integer
+slice_ln2=0 #specifies the slice to implement on last name 2 as integer
+new_fn='' #string to store derived new first name 
+new_ln='' #string to store derived new last name
+
+age_1=0 #input integer for first age
+age_2=0 #input integer for second age
+age_1_digits=[] #list for digits in first age
+age_2_digits=[] #list for digits in second age
+age_len=0 #to specify length of first age/second age as integer
+new_age_1=0 #specifies new first age as integer
+new_age_2=0 #specifies new second age as integer
+new_age=0 #specifies new age for the fake passport as integer
+c_year=0 #integer to store current year 
+c_month=0 #integer to store current month
+c_date=0 #integer to store current date
+birth_year=0 #integer to store calculated birth year
+birth_month=0 #integer to store calculated birth month
+birth_date=0 #integer to store calculated birth date
+
+new_ID=0 #integer to store calculated new ID 
+new_operand=[] #list for digits in new ID
+new_add=0 #integer to perform additon on new ID
+
+demonstrator='' #string to store demonstrator's name
+passport='' #string to store formatted passport
+
+plaintext='' #string to store clear text version of passport
+cipher='' #string to store encrypted version of passport
+shift=0 #integer to specify the number of shifts for CAESAR algorithm
+shift_direct=0 #integer to calculate direction of shift
+direct='' #string to store description of the direction of shift
+exit_script='' #to avoid abrupt end to the script 
+
+
+#FIRST TASK NAME
+#Taking 4 inputs from the user : two first names and two last names. I have used slicing technique to combine the two first names and the two last names. If length of any name is even : length/2 characters are included in the new name. And, if the length is odd : (length+1)/2 characters are included in the new name. 'new_fn' is the new generated first name and 'new_ln' is the new generated last name.
+first_name_1=str(input('Enter the 1st First Name : '))
+last_name_1=str(input('Enter the 1st Last Name : '))
+first_name_2=str(input('Enter the 2nd First Name : '))
+last_name_2=str(input('Enter the 2nd Last Name : '))
+len_fn1=len(first_name_1)
+len_fn2=len(first_name_2)
+len_ln1=len(last_name_1)
+len_ln2=len(last_name_2)
+
+if(len_fn1%2==0):
+    slice_fn1=(len_fn1/2)   
+else:
+    slice_fn1=(len_fn1+1)/2
+if(len_fn2%2==0):
+    slice_fn2=(len_fn2/2)
+else:
+    slice_fn2=(len_fn2-1)/2
+new_fn=first_name_1[:int(slice_fn1)]+first_name_2[int(slice_fn2):]
+
+if(len_ln1%2==0):
+    slice_ln1=(len_ln1/2)
+else:
+    slice_ln1=(len_ln1+1)/2
+if(len_ln2%2==0):
+    slice_ln2=(len_ln2/2)
+else:
+    slice_ln2=(len_ln2-1)/2
+new_ln=last_name_1[:int(slice_ln1)]+last_name_2[int(slice_ln2):]
+
+
+#SECOND TASK AGE
+#This section of the program will work for any valid age. Two age inputs(age_1 & age_2) are taken from the user. Digits are separated using digits=[int(x) for x in str(a)] i.e. both the ages is first converted to a string and then the digits are individually stored in the respective lists(age_1_digits[] & age_2_digits[]). The digits in two lists are added to yeild the new_age for the fake passport. I have also implemented try/except(ValueError) method inside a while loop to gracefully carry out the task. 
+i=0
+while i<1:
+    try: 
+        age_1=int(input('Enter the first age :'))
+        age_2=int(input('Enter the second age :'))
+        i=1
+    except(ValueError):
+        print('Oops, please enter an integer for age')
+    
+age_1_digits=[int(digit_1) for digit_1 in str(age_1)]
+age_2_digits=[int(digit_2) for digit_2 in str(age_2)]  
+
+age_len=len(str(age_1))
+i=0
+while i<age_len:
+    new_age_1+=age_1_digits[i]
+    i=i+1
+age_len=len(str(age_2))
+i=0
+while i<age_len:
+    new_age_2+=age_2_digits[i]
+    i=i+1
+new_age=new_age_1 + new_age_2
+#current year, month and date are individually imported using time.strftime() function to compute the date of birth for the new calculated age. Birth year is computed by substracting new calculated age from the current year. Birth month and birth date are calculated using random.randint() function. Thus, to ensure the birth date is legitamate, consideration is given on cases where the randomly generated month/date is beyond the current month/date and corresponding manipulation of the birth year is done.
+c_year=int(time.strftime("%Y"))
+c_month=int(time.strftime("%m"))
+c_date=int(time.strftime("%d"))
+birth_year=c_year-new_age
+birth_month=random.randint(1,12)
+if(birth_month==4 or 6 or 9 or 11):
+    birth_date=random.randint(1,30)
+elif(birth_month==2):
+    birth_date=random.randint(1,28)
+else: 
+    birth_date=random.randint(1,31)
+if(birth_month>c_month):
+    birth_year=c_year-new_age+1
+if(birth_month==c_month and birth_date>c_date):
+    birth_year=c_year-new_age+1
+    
+    
+#THIRD TASK ID
+#Structure of this task is designed spefically of a 10 digit ID generation. 'new_age' from previous task is used as input to 'new_ID'. 'New_operand' is the list of individual digits in 'new_age'. Addition of the last two digits in 'new_ID' takes place and the resultant number's mod 10 value is placed at the end of the 'new ID' increasing the number of digits in 'new_ID' by 1. The process of adding last two digits to yield a new last digit is repeated until the 'new_ID' is 10 digit long.
+new_ID=new_age
+i=1
+for i in range(1,9):
+    new_operand=[int(new_digits) for new_digits in str(new_ID)]
+    new_add=(new_operand[-2]+new_operand[-1])%10
+    new_ID=new_ID*10+new_add
+
+    
+#FOURTH TASK FORMAT
+#This is the presentation task of the assignment. Only new input here is the name of my demonstrator. Name and ID are separated by 3 tab distance. Each text line is separated by one line spacing. 
+demonstrator='MD Samiullah'
+
+Passport="\nName : %s %s \t\t\t ID : %d \n\nDOB : %d/%d/%d \n\nAuthorized By : %s\n" % (new_fn,new_ln,new_ID,birth_date,birth_month,birth_year,demonstrator)
+
+print(Passport)
+
+
+#FIFTH TASK ENCRYPTION
+#The size of the shift/key is chosen by the user and the direction of shift is randomly generated using 'shift_direct' : if 1, direction is right or if 2, direction is left. Information about the shift/key and the direction are specified to the user at the end of the encryption. I have implemented a long string consisting of lowercase characters, uppercase characters and digits 0-9. Using this long string will make it difficult for bad guys to differentiate between alphabets and digits[only slightly though]. The size of the shift can be any integer. Each character in plaintext passport is compared with each character in this string and upon a match, the character is shifted by user defined shifts in a randomly chosen direction. I have again used try/except(ValueError) inside a while loop to gracefully carry out the task.
+plaintext=str(Passport)
+shift_direct=random.randint(1,2)
+all_chars = string.ascii_lowercase+string.digits+string.ascii_uppercase
+i=0
+while i<1:
+    try:
+        shift=int(input('Please enter your personal encryption shift integer: '))
+        i=1
+    except(ValueError):
+        print('Oops, please enter an integer')  
+for char in plaintext:
+    if char in all_chars and shift_direct==1:
+        cipher+=str(all_chars[(all_chars.index(char)+shift)%(len(all_chars))])
+        direct='Right'
+    elif char in all_chars and shift_direct==2:
+        cipher+=str(all_chars[(all_chars.index(char)-shift)%(len(all_chars))])
+        direct='Left'
+    else:
+        cipher+=char
+        
+print(cipher)
+print('The cipher shift key is %d and the direction is %s. Please save this information securely for decryption.'%(shift,direct))
+exit_script=input('Thank you for using Fake Passport Generator. Press Enter key to exit.')
